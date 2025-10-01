@@ -1,0 +1,4 @@
+# Ignore runtime cache and session files created by CodeIgniter
+application/cache/
+application/cache/sessions/
+application/cache/sessions/ci_session*
