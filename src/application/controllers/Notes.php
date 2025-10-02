@@ -1,25 +1,35 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Notes extends CI_Controller {
-    public function __construct() {
+class Notes extends CI_Controller
+{
+    public function __construct()
+    {
         parent::__construct();
+        // Ensure session library is loaded before using $this->session
+        $this->load->library('session');
+        if ($this->session->userdata('logged_in') !== true) {
+            redirect('users/login');
+        }
         $this->load->model('note_model');
         $this->load->helper('url');
         $this->load->helper('form');
     }
 
-    public function index() {
+    public function index()
+    {
         $data['notes'] = $this->note_model->get_notes();
         $data['title'] = 'Notes';
         $this->load->view('notes/index', $data);
     }
 
-    public function create() {
-        if($this->input->post('title')) {
+    public function create()
+    {
+        if ($this->input->post('title')) {
             $note_data = array(
                 'title' => $this->input->post('title'),
                 'content' => $this->input->post('content'),
+                'user_id' => $this->session->userdata('user_id')
             );
             $this->note_model->create_note($note_data);
             redirect('notes');
@@ -28,22 +38,24 @@ class Notes extends CI_Controller {
         $this->load->view('notes/create', $data);
     }
 
-    public function view($id) {
+    public function view($id)
+    {
         $data['note'] = $this->note_model->get_note_by_id($id);
-        if(!$data['note']) {
+        if (!$data['note']) {
             show_404();
         }
         $data['title'] = 'View Note';
         $this->load->view('notes/view', $data);
     }
 
-    public function edit($id) {
+    public function edit($id)
+    {
         $data['note'] = $this->note_model->get_note_by_id($id);
-        if(!$data['note']) {
+        if (!$data['note']) {
             show_404();
         }
-        
-        if($this->input->post('title')) {
+
+        if ($this->input->post('title')) {
             $note_data = array(
                 'title' => $this->input->post('title'),
                 'content' => $this->input->post('content'),
@@ -51,12 +63,13 @@ class Notes extends CI_Controller {
             $this->note_model->update_note($id, $note_data);
             redirect('notes');
         }
-        
+
         $data['title'] = 'Edit Note';
         $this->load->view('notes/edit', $data);
     }
 
-    public function delete($id) {
+    public function delete($id)
+    {
         $this->note_model->delete_note($id);
         redirect('notes');
     }

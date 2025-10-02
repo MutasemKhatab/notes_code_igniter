@@ -38,6 +38,8 @@ Right now, your notes app is a free-for-all. Anyone who visits the site can see,
 
 ---
 
+here
+
 ## Chapter 03: User Authentication
 
 ### Objective 🎯
